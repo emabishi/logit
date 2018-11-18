@@ -1,0 +1,30 @@
+{
+  "name": "logit",
+  "version": "1.0.0",
+  "description": "Slack integration with Freckle",
+  "main": "index.js",
+  "scripts": {
+    "start": "nodemon src/index.js",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/emabishi/logit.git"
+  },
+  "keywords": [],
+  "author": "Mabishi @emabishi",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/emabishi/logit/issues"
+  },
+  "homepage": "https://github.com/emabishi/logit#readme",
+  "devDependencies": {
+    "dotenv": "^6.1.0",
+    "nodemon": "^1.18.6"
+  },
+  "dependencies": {
+    "axios": "^0.18.0",
+    "body-parser": "^1.18.3",
+    "express": "^4.16.4"
+  }
+}
