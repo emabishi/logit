@@ -5,5 +5,7 @@ module.exports = (router) => {
     .post(controller.logToday);
   router.route('/date')
     .post(controller.logForDate);
+  router.route('/between')
+    .post(controller.logBetween);
   return router;
 };
