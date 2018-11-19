@@ -1,0 +1,5 @@
+Only HTTPS traffic is allowed when accessing the API. You must use TLSv1.1 or TLSv1.2. SSLv3 and TLSv1 is not supported.
+All data is sent and received as JSON, with the exception of File Uploads.
+Blank fields are included as null in responses.
+Use ISO 8061 for dates and timestamps (YYYY-MM-DD and YYYY-MM-DDTHH:MM:SSZ respectively). 
+For timestamps, Freckle uses UTC internally; for consistency, please be sure to not accidentally use timestamps in your local time zone.
