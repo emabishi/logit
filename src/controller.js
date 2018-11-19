@@ -66,12 +66,13 @@ module.exports = {
         message: 'Incorrect date supplied.'
       })
     }
+  },
+  logBetween: (req, res, next) => {
+    const from = req.body.from;
+    const to = req.body.to;
+    const omitWeekends = req.body.omitWeekends;
+    // Will loop through and call logForDate
+    // Will not log weekends when omitWeekends is true
+    
   }
-  // logBetween: (req, res, next) => {
-  //   const from = req.body.from;
-  //   const to = req.body.to;
-        // const omitWeekends = req.body.omitWeekends;
-  //   // Will loop through and call logForDate
-        // Will not log weekends when 
-  // }
 }
