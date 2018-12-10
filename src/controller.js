@@ -1,5 +1,7 @@
 const axios = require('axios');
 const isDate = require('../utils').isDate;
+const getDatesBetween = require('../utils').getDatesBetween;
+const moment = require('moment-timezone');
 
 module.exports = {
   logToday:  async (req, res, next) => {
@@ -68,11 +70,28 @@ module.exports = {
     }
   },
   logBetween: (req, res, next) => {
-    const from = req.body.from;
-    const to = req.body.to;
-    const omitWeekends = req.body.omitWeekends;
     // Will loop through and call logForDate
     // Will not log weekends when omitWeekends is true
     
+    let status = 200;
+    let { from, to, omitWeekends } = req.body;
+
+    let fts = moment(from, 'MMMM Do YYYY, h:mm:ss a').valueOf();
+    const fromDate = moment(fts).tz('Africa/Nairobi').format('MMMM Do YYYY, h:mm:ss a');
+    console.log('from', fromDate);
+    let tts = moment(to, 'MMMM Do YYYY, h:mm:ss a').valueOf();
+    const toDate = moment(tts).tz('Africa/Nairobi').format('MMMM Do YYYY, h:mm:ss a');
+
+    const dates = getDatesBetween(fromDate, toDate, omitWeekends);
+    if (dates) {
+      res.status(status).send({
+        dates
+      });
+    } else {
+      status = 500;
+      res.status(status).send({
+        message: 'Something wen\'t wrong'
+      });
+    }
   }
 }

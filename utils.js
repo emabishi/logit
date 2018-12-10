@@ -1,44 +1,70 @@
-module.exports = {
-  validateDateSpan: ({ from, to }) => {
-    // TODO
-    // From must be less recent than to
-    // From and to passed in as YYYY-MM-DD
-    // Will return true if span is valid, false o/w
-  },
-  isDate: (input) => {
+const moment = require('moment-timezone');
+
+const isDate = (input) => {
     // Check if date is of type date
     const date = new Date(input);
-    const isDate = date.getTime() !== NaN;
-    return isDate;
-  },
-  isWeekend: (input) => {
+    return isNaN(date.getTime()); // unix time
+}
+
+const isWeekend = (input) => {
+  if (this.isDate(input)) {
     const date = new Date(input);
     const day = date.getDay();
     return (day === 6 || day === 0);
-  },
-  getDatesBetween: (from, to, noWeekends) => {
-    // const thirtyDayMonths = [4,6,9,11];
-    const isWeekend = (date) => this.isWeekend(date);
-    // const isLeapYear = (date) => (date.getFullYear()) % 4 !== 0;
-
-    let currentDate = new Date(from);
-    let finalDate = new Date(to);
-    const allDates = [];
-    do {
-      if (this.isDate(currentDate)) {
-        // Check if date is on a weekend
-        if (noWeekends && this.isWeekend(currentDate)) {
-          // pass
-        } else {
-          allDates.push(currentDate);
-          currentDate = new Date(parseInt(currentDate.getTime()) + 86400000); // Go to the next day
-        }
-      } else {
-        // pass
-      }
-    }
-    while (currentDate !== finalDate)
-
-    return allDates;
+  } else {
+    throw new Error('incorrect date for weekend');
   }
 }
+
+const datesAreEquivalent = (date1, date2) => {
+  const getYear = (date) => date.getFullYear();
+  const getMonth = (date) => date.getMonth() + 1; // Jan == 0
+  const getDay = (date) => date.getDate();
+
+  const date1String = `${getYear(date1)/getMonth(date1)/getDay(date1)}`;
+  const date2String = `${getYear(date2)/getMonth(date2)/getDay(date2)}`;
+  
+  return (date1String === date2String);
+}
+
+const getDatesBetween = (fromDate, toDate, omitWeekends) => {
+  let dates = [];
+  if (fromDate && toDate) {
+    do {
+      dates.push(fromDate);
+      fromDate = moment(fromDate).add(1, 'days'); // next day
+    }
+    while (!(moment(fromDate).isSameOrAfter(toDate, 'day')));
+    return dates;
+  } else {
+    throw new Error('Incorrect input provided');
+  }
+}
+
+  // getDatesBetween: (from, to, noWeekends) => {
+  //   // Doesn't care about daylight savings 
+  //   //date.setTime(date.getTime() + 12 * 1000 * 60 * 60); date.setHours(0);
+  //   // https://stackoverflow.com/questions/6963311/add-days-to-a-date-object
+  //   let allDates = [];
+  //   let currentDate = new Date(from);
+  //   let finalDate = new Date(to);
+  //   do {
+  //     if (this.isDate(currentDate) && this.isDate(finalDate)) {
+  //       // Check if date is on a weekend
+  //       // if (noWeekends && this.isWeekend(currentDate)) {
+  //         // pass
+  //       // } else {
+  //         allDates.push(currentDate);
+  //         currentDate = new Date(currentDate.setTime(currentDate.getTime() + 86400000)); // Go to the next day
+  //       // }
+  //     } else {
+  //       throw new Error('incorrect date provided');
+  //     }
+  //   }
+  //   while (!(this.datesAreEquivalent(currentDate, finalDate)))
+
+  //   return allDates;
+  // }
+module.exports = {
+  isDate, isWeekend, datesAreEquivalent, getDatesBetween
+};
