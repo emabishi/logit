@@ -31,14 +31,26 @@ const getDatesBetween = (fromDate, toDate, omitWeekends) => {
   let dates = [];
   if (fromDate && toDate) {
     do {
-      dates.push(fromDate);
-      fromDate = moment(fromDate, 'DD/MM/YYYY').add(1, 'days').format('DD/MM/YYYY'); // next day
+      if (!omitWeekends) {
+        dates.push(fromDate);
+        fromDate = moment(fromDate, 'DD/MM/YYYY').add(1, 'days').format('DD/MM/YYYY'); // next day
+      } else {
+        // evaluate day of week
+        fromDay = moment(fromDate, 'DD/MM/YYYY').isoWeekday();
+        if (fromDay === 5) {
+          // ignore next 2 days
+          fromDate = moment(fromDate, 'DD/MM/YYYY').add(2, 'days').format('DD/MM/YYYY'); // next Monday
+        } else {
+          fromDate = moment(fromDate, 'DD/MM/YYYY').add(1, 'days').format('DD/MM/YYYY');
+          dates.push(fromDate);
+        }
+      }
     }
     while (
       !(moment(moment(fromDate, 'DD/MM/YYYY').valueOf())
     .isSameOrAfter(moment(toDate, 'DD/MM/YYYY').valueOf(), 'day'))
     );
-    dates.push(toDate)
+    // dates.push(toDate)
     return dates;
   } else {
     throw new Error('Incorrect input provided');
