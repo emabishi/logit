@@ -32,9 +32,13 @@ const getDatesBetween = (fromDate, toDate, omitWeekends) => {
   if (fromDate && toDate) {
     do {
       dates.push(fromDate);
-      fromDate = moment(fromDate).add(1, 'days'); // next day
+      fromDate = moment(fromDate, 'DD/MM/YYYY').add(1, 'days').format('DD/MM/YYYY'); // next day
     }
-    while (!(moment(fromDate).isSameOrAfter(toDate, 'day')));
+    while (
+      !(moment(moment(fromDate, 'DD/MM/YYYY').valueOf())
+    .isSameOrAfter(moment(toDate, 'DD/MM/YYYY').valueOf(), 'day'))
+    );
+    dates.push(toDate)
     return dates;
   } else {
     throw new Error('Incorrect input provided');

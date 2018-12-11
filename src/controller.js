@@ -76,11 +76,10 @@ module.exports = {
     let status = 200;
     let { from, to, omitWeekends } = req.body;
 
-    let fts = moment(from, 'MMMM Do YYYY, h:mm:ss a').valueOf();
-    const fromDate = moment(fts).tz('Africa/Nairobi').format('MMMM Do YYYY, h:mm:ss a');
-    console.log('from', fromDate);
-    let tts = moment(to, 'MMMM Do YYYY, h:mm:ss a').valueOf();
-    const toDate = moment(tts).tz('Africa/Nairobi').format('MMMM Do YYYY, h:mm:ss a');
+    let fts = moment(from, 'DD/MM/YYYY').valueOf();
+    const fromDate = moment(fts).tz('Africa/Nairobi').format('DD/MM/YYYY');
+    let tts = moment(to, 'DD/MM/YYYY').valueOf();
+    const toDate = moment(tts).tz('Africa/Nairobi').format('DD/MM/YYYY');
 
     const dates = getDatesBetween(fromDate, toDate, omitWeekends);
     if (dates) {
