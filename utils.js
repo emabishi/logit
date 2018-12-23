@@ -28,20 +28,21 @@ const datesAreEquivalent = (date1, date2) => {
 }
 
 const getDatesBetween = (fromDate, toDate, omitWeekends) => {
+  // excludes fromDate
   let dates = [];
   if (fromDate && toDate) {
     do {
       if (!omitWeekends) {
-        dates.push(fromDate);
         fromDate = moment(fromDate, 'DD/MM/YYYY').add(1, 'days').format('DD/MM/YYYY'); // next day
+        dates.push(fromDate);
       } else {
         // evaluate day of week
-        fromDay = moment(fromDate, 'DD/MM/YYYY').isoWeekday();
-        if (fromDay === 5) {
+        fromDay = moment(fromDate, 'DD/MM/YYYY').isoWeekday(); // Gets day of week from 1-7
+        if (fromDay === 5) { // Friday
           // ignore next 2 days
           fromDate = moment(fromDate, 'DD/MM/YYYY').add(2, 'days').format('DD/MM/YYYY'); // next Monday
         } else {
-          fromDate = moment(fromDate, 'DD/MM/YYYY').add(1, 'days').format('DD/MM/YYYY');
+          fromDate = moment(fromDate, 'DD/MM/YYYY').add(1, 'days').format('DD/MM/YYYY'); // next day
           dates.push(fromDate);
         }
       }
@@ -50,7 +51,6 @@ const getDatesBetween = (fromDate, toDate, omitWeekends) => {
       !(moment(moment(fromDate, 'DD/MM/YYYY').valueOf())
     .isSameOrAfter(moment(toDate, 'DD/MM/YYYY').valueOf(), 'day'))
     );
-    // dates.push(toDate)
     return dates;
   } else {
     throw new Error('Incorrect input provided');
