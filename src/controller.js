@@ -1,10 +1,11 @@
 const axios = require('axios');
-const isDate = require('../utils').isDate;
 const getDatesBetween = require('../utils').getDatesBetween;
+const logForDate = require('../utils').logForDate;
 const moment = require('moment-timezone');
 
-module.exports = {
-  logToday:  async (req, res, next) => {
+
+class LogController {
+  async logToday (req, res, next) {
     const headers = {
       'User-Agent': 'Logit/1.0',
       'Content-Type': 'application/json',
@@ -22,54 +23,20 @@ module.exports = {
       "project_name": "Nivi"
     };
     try {
-      const resp = await axios.post('https://api.letsfreckle.com/v2/entries', payload, { headers });
+      const resp = await axios.post('https://api.letsfreckle.com/v2/entries', payload, {
+        headers
+      });
       const data = resp.data;
       res.status(status).send(data);
 
-    } catch(e) {
+    } catch (e) {
       status = 500;
       res.status(status).send({
-        error: JSON.stringify(e, null, 2)
+        error: e,
       });
     }
-  },
-  logForDate: async (req, res, next) => {
-    let status = 200;
-    let { date, project } = req.body; // project = Nivi
-    if (isDate(date)) {
-      date = date.replace('/', '-');
-      const payload = {
-        date,
-        minutes: 480,
-        project_name: project
-      };
-      const headers = {
-        'User-Agent': 'Logit/1.0',
-        'Content-Type': 'application/json',
-        'X-FreckleToken': process.env.FRECKLE_TOKEN
-      };
-      try {
-        const resp = await axios.post('https://api.letsfreckle.com/v2/entries', payload, {
-          headers
-        });
-        const data = resp.data;
-        res.status(status).send(data);
-
-      } catch (e) {
-        status = 500;
-        res.status(status).send({
-          error: JSOM.stringify(e, null, 2),
-        });
-      }
-    } else {
-      status = 400;
-      res.status(status).send({
-        error: 'Bad request',
-        message: 'Incorrect date supplied.'
-      })
-    }
-  },
-  logBetween: (req, res, next) => {
+  }
+  async logBetween (req, res, next) {
     // Will loop through dates and call logForDate
     // Will not log weekends when omitWeekends is true
     
@@ -85,13 +52,9 @@ module.exports = {
 
     if (dates) {
       // date should be of the form yyyy-mm-dd
-      dates.forEach(async (date) => {
-        const payload = {
-          date: date,
-          project: 'Nivi'
-        };
-        await axios.post('/date', payload).catch(e => console.log('Error posting to /date', e));
-      });
+      console.log(dates)
+      const promiseList = dates.map(date => logForDate(req, res, date, 'Nivi'));
+      Promise.all(promiseList).then(vals => res.send(status).send({ message: 'Success', data: vals})).catch(e => new Error(e));
     } else {
       status = 500;
       res.status(status).send({
@@ -100,3 +63,4 @@ module.exports = {
     }
   }
 }
+module.exports = LogController;

@@ -1,4 +1,5 @@
 const moment = require('moment-timezone');
+const axios = require('axios');
 
 // Returns true if input is valid date
 const isDate = (input) => {
@@ -58,6 +59,83 @@ const getDatesBetween = (fromDate, toDate, omitWeekends) => {
   }
 }
 
+// const logForDate = async (req, res, date, project) => {
+//   let status = 200;
+//   // let { date, project } = req.body; // project = Nivi
+//   if (isDate(date)) {
+//     date = date.replace('/', '-');
+//     const payload = {
+//       date,
+//       minutes: 480,
+//       project_name: project
+//     };
+//     const headers = {
+//       'User-Agent': 'Logit/1.0',
+//       'Content-Type': 'application/json',
+//       'X-FreckleToken': process.env.FRECKLE_TOKEN
+//     };
+//     try {
+//       const resp = await axios.post('https://api.letsfreckle.com/v2/entries', payload, {
+//         headers
+//       });
+//       const data = resp.data;
+//       res.status(status).send(data);
+
+//     } catch (e) {
+//       status = 500;
+//       res.status(status).send({
+//         error: e,
+//       });
+//     }
+//   } else {
+//     status = 400;
+//     res.status(status).send({
+//       error: 'Bad request',
+//       message: 'Incorrect date supplied.'
+//     })
+//   }
+// }
+
+const logForDate = async (req, res, date, project) => {
+  let status = 200;
+  // let { date, project } = req.body; // project = Nivi
+  if (isDate(date)) {
+    date = date.replace('/', '-');
+    const payload = {
+      date,
+      minutes: 480,
+      project_name: project
+    };
+    const headers = {
+      'User-Agent': 'Logit/1.0',
+      'Content-Type': 'application/json',
+      'X-FreckleToken': process.env.FRECKLE_TOKEN
+    };
+    try {
+      // const resp = await axios.post('https://api.letsfreckle.com/v2/entries', payload, {
+      //   headers
+      // });
+      return axios.post('https://api.letsfreckle.com/v2/entries', payload, {
+        headers
+      });
+      // const data = resp.data;
+      // res.status(status).send(data);
+
+    } catch (e) {
+      status = 500;
+      res.status(status).send({
+        error: e,
+      });
+    }
+  } else {
+    status = 400;
+    res.status(status).send({
+      error: 'Bad request',
+      message: 'Incorrect date supplied.'
+    })
+  }
+}
+
   // getDatesBetween: (from, to, noWeekends) => {
   //   // Doesn't care about daylight savings 
   //   //date.setTime(date.getTime() + 12 * 1000 * 60 * 60); date.setHours(0);
@@ -83,5 +161,5 @@ const getDatesBetween = (fromDate, toDate, omitWeekends) => {
   //   return allDates;
   // }
 module.exports = {
-  isDate, isWeekend, datesAreEquivalent, getDatesBetween
+  isDate, isWeekend, datesAreEquivalent, getDatesBetween, logForDate
 };
