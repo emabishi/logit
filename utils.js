@@ -1,9 +1,10 @@
 const moment = require('moment-timezone');
 
+// Returns true if input is valid date
 const isDate = (input) => {
     // Check if date is of type date
     const date = new Date(input);
-    return isNaN(date.getTime()); // unix time
+    return !isNaN(date.getTime()); // unix time
 }
 
 const isWeekend = (input) => {
@@ -33,23 +34,23 @@ const getDatesBetween = (fromDate, toDate, omitWeekends) => {
   if (fromDate && toDate) {
     do {
       if (!omitWeekends) {
-        fromDate = moment(fromDate, 'DD/MM/YYYY').add(1, 'days').format('DD/MM/YYYY'); // next day
+        fromDate = moment(fromDate, 'YYYY-MM-DD').add(1, 'days').format('YYYY-MM-DD'); // next day
         dates.push(fromDate);
       } else {
         // evaluate day of week
-        fromDay = moment(fromDate, 'DD/MM/YYYY').isoWeekday(); // Gets day of week from 1-7
+        fromDay = moment(fromDate, 'YYYY-MM-DD').isoWeekday(); // Gets day of week from 1-7
         if (fromDay === 5) { // Friday
           // ignore next 2 days
-          fromDate = moment(fromDate, 'DD/MM/YYYY').add(2, 'days').format('DD/MM/YYYY'); // next Monday
+          fromDate = moment(fromDate, 'YYYY-MM-DD').add(2, 'days').format('YYYY-MM-DD'); // next Monday
         } else {
-          fromDate = moment(fromDate, 'DD/MM/YYYY').add(1, 'days').format('DD/MM/YYYY'); // next day
+          fromDate = moment(fromDate, 'YYYY-MM-DD').add(1, 'days').format('YYYY-MM-DD'); // next day
           dates.push(fromDate);
         }
       }
     }
     while (
-      !(moment(moment(fromDate, 'DD/MM/YYYY').valueOf())
-    .isSameOrAfter(moment(toDate, 'DD/MM/YYYY').valueOf(), 'day'))
+      !(moment(moment(fromDate, 'YYYY-MM-DD').valueOf())
+    .isSameOrAfter(moment(toDate, 'YYYY-MM-DD').valueOf(), 'day'))
     );
     return dates;
   } else {

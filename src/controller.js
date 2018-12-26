@@ -35,7 +35,7 @@ module.exports = {
   },
   logForDate: async (req, res, next) => {
     let status = 200;
-    let { date, project } = req.body;
+    let { date, project } = req.body; // project = Nivi
     if (isDate(date)) {
       date = date.replace('/', '-');
       const payload = {
@@ -70,26 +70,32 @@ module.exports = {
     }
   },
   logBetween: (req, res, next) => {
-    // Will loop through and call logForDate
+    // Will loop through dates and call logForDate
     // Will not log weekends when omitWeekends is true
     
     let status = 200;
     let { from, to, omitWeekends } = req.body;
 
-    let fts = moment(from, 'DD/MM/YYYY').valueOf();
-    const fromDate = moment(fts).tz('Africa/Nairobi').format('DD/MM/YYYY');
-    let tts = moment(to, 'DD/MM/YYYY').valueOf();
-    const toDate = moment(tts).tz('Africa/Nairobi').format('DD/MM/YYYY');
+    let fts = moment(from, 'YYYY-MM-DD').valueOf();
+    const fromDate = moment(fts).tz('Africa/Nairobi').format('YYYY-MM-DD');
+    let tts = moment(to, 'YYYY-MM-DD').valueOf();
+    const toDate = moment(tts).tz('Africa/Nairobi').format('YYYY-MM-DD');
 
     const dates = getDatesBetween(fromDate, toDate, omitWeekends);
+
     if (dates) {
-      res.status(status).send({
-        dates
+      // date should be of the form yyyy-mm-dd
+      dates.forEach(async (date) => {
+        const payload = {
+          date: date,
+          project: 'Nivi'
+        };
+        await axios.post('/date', payload).catch(e => console.log('Error posting to /date', e));
       });
     } else {
       status = 500;
       res.status(status).send({
-        message: 'Something wen\'t wrong'
+        message: 'No dates provided'
       });
     }
   }
