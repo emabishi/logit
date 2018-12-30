@@ -36,7 +36,7 @@ class LogController {
       });
     }
   }
-  async logBetween (req, res, next) {
+  logBetween (req, res, next) {
     // Will loop through dates and call logForDate
     // Will not log weekends when omitWeekends is true
     
@@ -52,9 +52,8 @@ class LogController {
 
     if (dates) {
       // date should be of the form yyyy-mm-dd
-      console.log(dates)
       const promiseList = dates.map(date => logForDate(req, res, date, 'Nivi'));
-      Promise.all(promiseList).then(vals => res.send(status).send({ message: 'Success', data: vals})).catch(e => new Error(e));
+      Promise.all(promiseList).then(resp => { console.log(resp); res.send(JSON.stringify(resp)) }).catch(e => res.send(JSON.stringify(e)));
     } else {
       status = 500;
       res.status(status).send({
